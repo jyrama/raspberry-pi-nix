@@ -1,11 +1,15 @@
-{ bluez-firmware, firmware-nonfree }:
-{ lib, stdenvNoCC }:
-
+{
+  bluez-firmware,
+  firmware-nonfree,
+}: {
+  lib,
+  stdenvNoCC,
+}:
 stdenvNoCC.mkDerivation {
   pname = "raspberrypi-wireless-firmware";
   version = "2024-02-26";
 
-  srcs = [ ];
+  srcs = [];
 
   sourceRoot = ".";
 
@@ -33,11 +37,10 @@ stdenvNoCC.mkDerivation {
   '';
 
   meta = with lib; {
-    description =
-      "Firmware for builtin Wifi/Bluetooth devices in the Raspberry Pi 3+ and Zero W";
+    description = "Firmware for builtin Wifi/Bluetooth devices in the Raspberry Pi 3+ and Zero W";
     homepage = "https://github.com/RPi-Distro/firmware-nonfree";
     license = licenses.unfreeRedistributableFirmware;
     platforms = platforms.linux;
-    maintainers = with maintainers; [ lopsided98 ];
+    maintainers = with maintainers; [lopsided98];
   };
 }

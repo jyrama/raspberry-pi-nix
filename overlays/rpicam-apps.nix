@@ -1,13 +1,17 @@
-{ rpicam-apps-src, lib, pkgs, stdenv }:
-
+{
+  rpicam-apps-src,
+  lib,
+  pkgs,
+  stdenv,
+}:
 stdenv.mkDerivation {
   pname = "libcamera-apps";
   version = "v1.5.0";
 
   src = rpicam-apps-src;
 
-  nativeBuildInputs = with pkgs; [ meson pkg-config ];
-  buildInputs = with pkgs; [ libjpeg libtiff libcamera libepoxy boost libexif libpng ffmpeg libdrm ninja ];
+  nativeBuildInputs = with pkgs; [meson pkg-config];
+  buildInputs = with pkgs; [libjpeg libtiff libcamera libepoxy boost libexif libpng ffmpeg libdrm ninja];
   mesonFlags = [
     "-Denable_qt=disabled"
     "-Denable_opencv=disabled"
@@ -25,6 +29,6 @@ stdenv.mkDerivation {
     description = "Userland tools interfacing with Raspberry Pi cameras";
     homepage = "https://github.com/raspberrypi/libcamera-apps";
     license = licenses.bsd2;
-    platforms = [ "aarch64-linux" ];
+    platforms = ["aarch64-linux"];
   };
 }

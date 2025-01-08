@@ -3,7 +3,6 @@
 # nixos image for a raspberry pi to an sd-card in a way so that we can
 # pop it in and go. We don't need to support many possible hardware
 # targets since we know we are targeting raspberry pi products.
-
 # This module creates a bootable SD card image containing the given NixOS
 # configuration. The generated image is MBR partitioned, with a FAT
 # /boot/firmware partition, and ext4 root partition. The generated image
@@ -16,28 +15,29 @@
 #
 # The derivation for the SD image will be placed in
 # config.system.build.sdImage
-
-{ modulesPath, config, lib, pkgs, ... }:
-
-with lib;
-
-let
-  rootfsImage = pkgs.callPackage "${modulesPath}/../lib/make-ext4-fs.nix" ({
-    inherit (config.sdImage) storePaths;
-    compressImage = true;
-    populateImageCommands = config.sdImage.populateRootCommands;
-    volumeLabel = "NIXOS_SD";
-  } // optionalAttrs (config.sdImage.rootPartitionUUID != null) {
-    uuid = config.sdImage.rootPartitionUUID;
-  });
-in
 {
-  imports = [ ];
+  modulesPath,
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+with lib; let
+  rootfsImage = pkgs.callPackage "${modulesPath}/../lib/make-ext4-fs.nix" ({
+      inherit (config.sdImage) storePaths;
+      compressImage = true;
+      populateImageCommands = config.sdImage.populateRootCommands;
+      volumeLabel = "NIXOS_SD";
+    }
+    // optionalAttrs (config.sdImage.rootPartitionUUID != null) {
+      uuid = config.sdImage.rootPartitionUUID;
+    });
+in {
+  imports = [];
 
   options.sdImage = {
     imageName = mkOption {
-      default =
-        "${config.sdImage.imageBaseName}-${config.system.nixos.label}-${pkgs.stdenv.hostPlatform.system}.img";
+      default = "${config.sdImage.imageBaseName}-${config.system.nixos.label}-${pkgs.stdenv.hostPlatform.system}.img";
       description = ''
         Name of the generated image file.
       '';
@@ -112,7 +112,8 @@ in
     };
 
     populateRootCommands = mkOption {
-      example = literalExpression
+      example =
+        literalExpression
         "''\${config.boot.loader.generic-extlinux-compatible.populateCmd} -c \${config.system.build.toplevel} -d ./files/boot''";
       description = ''
         Shell commands to populate the ./files directory.
@@ -123,7 +124,8 @@ in
     };
 
     postBuildCommands = mkOption {
-      example = literalExpression
+      example =
+        literalExpression
         "'' dd if=\${pkgs.myBootLoader}/SPL of=$img bs=1024 seek=1 conv=notrunc ''";
       default = "";
       description = ''
@@ -162,15 +164,23 @@ in
       };
     };
 
-    sdImage.storePaths = [ config.system.build.toplevel ];
+    sdImage.storePaths = [config.system.build.toplevel];
 
-    system.build.sdImage = pkgs.callPackage
-      ({ stdenv, dosfstools, e2fsprogs, mtools, libfaketime, util-linux, zstd }:
+    system.build.sdImage =
+      pkgs.callPackage
+      ({
+        stdenv,
+        dosfstools,
+        e2fsprogs,
+        mtools,
+        libfaketime,
+        util-linux,
+        zstd,
+      }:
         stdenv.mkDerivation {
           name = config.sdImage.imageName;
 
-          nativeBuildInputs =
-            [ dosfstools e2fsprogs mtools libfaketime util-linux zstd ];
+          nativeBuildInputs = [dosfstools e2fsprogs mtools libfaketime util-linux zstd];
 
           inherit (config.sdImage) compressImage;
 
@@ -208,8 +218,8 @@ in
 
                 start=''${gap}M, size=$firmwareSizeBlocks, type=b
                 start=$((gap + ${
-                  toString config.sdImage.firmwareSize
-                }))M, type=83, bootable
+              toString config.sdImage.firmwareSize
+            }))M, type=83, bootable
             EOF
 
             # Copy the rootfs into the SD image
@@ -238,7 +248,7 @@ in
             fi
           '';
         })
-      { };
+      {};
 
     boot.postBootCommands = lib.mkIf config.sdImage.expandOnBoot ''
       # On the first boot do some maintenance tasks
