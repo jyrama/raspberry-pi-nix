@@ -3,21 +3,17 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
-    u-boot-src = {
-      flake = false;
-      url = "https://ftp.denx.de/pub/u-boot/u-boot-2024.07.tar.bz2";
-    };
     rpi-linux-stable-src = {
       flake = false;
       url = "github:raspberrypi/linux/stable_20241008";
     };
-    rpi-linux-6_6_67-src = {
+    rpi-linux-6_6_78-src = {
       flake = false;
       url = "github:raspberrypi/linux/rpi-6.6.y";
     };
-    rpi-linux-6_10_12-src = {
+    rpi-linux-6_12_17-src = {
       flake = false;
-      url = "github:raspberrypi/linux/rpi-6.10.y";
+      url = "github:raspberrypi/linux/rpi-6.12.y";
     };
     rpi-firmware-src = {
       flake = false;
